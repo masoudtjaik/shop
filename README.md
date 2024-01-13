@@ -1,4 +1,4 @@
-# The Project Of Maktab100: Cafe_GW
+# The Project : Electronics store
 description:Electronics store
 
 
@@ -9,26 +9,3 @@ An online store is a website that sells various products. This site includes hom
  and finally by selecting the payment option, they will be transferred to the payment page.
  After the payment is completed, the order will be sent to the customer's address
 
-## How to use
-The procedure of using this project involves these steps:
-1. Clone the project from Github repository using this command:
-```bash
-git clone https://github.com/Zeinab-Mo/Cafe_GW.git
-```
-2. Installing dependencies such as follwing:
-```python 
-pip install -r requirements.txt
-```
-3. Replace your usename and password in .....
-
-4. Run the project and enjoy
-```python
-python3 manage.py runserver
-```
-## Developers:
-- [Abolfazl_Rasouli](https://github.com/AbolfazlRasouli)
-- [Meysam_Tajik](https://github.com/meysamtj)
-- [Mahsan_Gilani](https://github.com/MahsanGilani)
-- [Zeinab_Moghadamnia](https://github.com/Zeinab-Mo)
-- [Kiana_Ebrahimi]()
-- [Negar_Bakhshian](https://github.com/negarbakhshian)
