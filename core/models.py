@@ -7,7 +7,9 @@ class Base(models.Model):
     update_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
+        ordering=('-created_at',)
+    def __str__(self) -> str:
+        return f'{self.created_at}'
