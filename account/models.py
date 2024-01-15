@@ -64,7 +64,8 @@ class User(Base, AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self) -> str:
-        return f'{self.username}-{self.phone_number}'
+        return f'{self.username}-{self.email}'
+
 
 class Address(Base):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_address')
@@ -74,12 +75,4 @@ class Address(Base):
     state = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self) -> str:
-        return f'{self.user}-{self.city}'
-
-
-class OtpCode(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_otp')
-    code = models.CharField(max_length=30)
-
-    def __str__(self) -> str:
-        return f'{self.user}-{self.code}'
+        return f'{self.city}-{self.street}'
