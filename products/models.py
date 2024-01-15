@@ -1,10 +1,10 @@
 from django.db import models
-from core.models import Base, StatusMixin
+from core.models import Base, StatusMixin,BaseDiscount
 from account.models import User
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
-
-
+from datetime import datetime,timedelta
+from django.utils import timezone
 # Create your models here.
 
 class Category(Base):
@@ -17,7 +17,7 @@ class Category(Base):
         return f'{self.name}'
 
 
-class Discount(models.Model):
+class Discount(BaseDiscount):
     CUSTOM_NUMBER = 'number'
     CUSTOM_PERECENT = 'perecent'
     CUSTOM_DISCOUNT = (
@@ -30,6 +30,11 @@ class Discount(models.Model):
     discount_code = models.IntegerField(blank=True, null=True)
 
     def clean(self):
+        if self.start<timezone.now():
+            raise ValidationError({'start': ' تاریخ شروع نباید برای گذشته باشد '})
+        
+        if self.expire < self.start + timedelta(days=1):
+            raise ValidationError({'expire': ' تاریخ انقضا باید یک روز بیشتر از شروع باشد '})
         if self.type == self.CUSTOM_PERECENT and isinstance(self.amount, int) and self.amount > 100:
             raise ValidationError({'dis': ' این فیلد نباید بیشتر از صد درصد باشد  '})
 
@@ -42,6 +47,7 @@ class Discount(models.Model):
     def __str__(self) -> str:
         return f'{self.amount}-{self.type}'
 
+    
 
 class Product(Base, StatusMixin):
     name = models.CharField(max_length=50)
@@ -49,16 +55,25 @@ class Product(Base, StatusMixin):
     Specifications = models.CharField(max_length=50)
     inventory = models.IntegerField()
     price = models.PositiveIntegerField()
+    price_discount=models.PositiveIntegerField(default=0)
     slug = models.SlugField(blank=True, null=True)
     discount = models.ForeignKey(Discount, on_delete=models.CASCADE, related_name='discount_product', null=True,
                                  blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category_product')
     image = models.ImageField(upload_to='covers/', blank=True, null=True)
+    color=models.CharField(max_length=20,default='black')
 
     def clean(self):
+        
         if self.discount:
             if self.discount.type == 'number' and self.price < self.discount.amount:
                 raise ValidationError({'discount': '  تخفیف نباید بیشتر از قیمت باشد '})
+        #     if self.discount.type =='perecent':
+        #         self.price_discount= (self.price*self.discount.amount)/100
+        #     if self.discount.type =='number':
+        #         self.price_discount= self.price-self.discount.amount
+        # else :
+        #     self.price_discount= self.price
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -66,7 +81,7 @@ class Product(Base, StatusMixin):
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return f'{self.name}-{self.price}'
+        return f'name:{self.name}-price:{self.price_discount}-inventory:{self.inventory}'
 
     def count_likes(self):
         count = self.product_like.count()
@@ -83,7 +98,10 @@ class Product(Base, StatusMixin):
             return False
         return True
 
-
+class Image(models.Model):
+    image = models.ImageField(upload_to='images/', blank=True, null=True)
+    product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name='images')
+    
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='like')
     product = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_like')
