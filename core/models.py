@@ -28,9 +28,15 @@ class Manager(models.Manager):
     def archive(self):
         return QuerySet(self.model)
     
-    def get_count(self):
-        # print('hello',self.model.is_deleted)
-        return QuerySet(self.model).get(pk=self.id)
+    def ten_product_new(self):
+        return QuerySet(self.model).first(10)
+    
+    def ten_is_discount(self):
+        return QuerySet(self.model).filter(is_deleted=False,is_active=True,discount__isnull=False).first(10)
+    
+    # def get_count(self):
+    #     # print('hello',self.model.is_deleted)
+    #     return QuerySet(self.model).get(pk=self.id)
     
     def deleted(self):
         return QuerySet(self.model).filter(is_deleted=True)
@@ -91,12 +97,13 @@ class DiscountManager(models.Manager):
 
     def archive(self):
         return DiscountQuerySet(self.model)
+    
 
     def deleted(self):
         return DiscountQuerySet(self.model).filter(is_deleted=True)
 
 class BaseDiscount(CustomBase):
-    start=models.DateTimeField(default=timezone.now()+timedelta(minutes=3))
+    start=models.DateTimeField(default=timezone.now()+timedelta(minutes=5))
     expire=models.DateTimeField(default=timezone.now()+timedelta(days=1,minutes=5))
     is_active=models.BooleanField(default=True)
     objects=DiscountManager()
@@ -139,13 +146,15 @@ class OrderQuerySet(models.QuerySet):
 class OrderManager(models.Manager):
 
     def get_queryset(self):
-        return OrderQuerySet(self.model).filter(is_deleted=False)
+        return OrderQuerySet(self.model).filter(is_deleted=False,)
 
     def archive(self):
         return OrderQuerySet(self.model)
     
     def paid(self):
         return OrderQuerySet(self.model).filter(id_deleted=False,is_paid=True)
+    
+        
     
     def unpaid(self):
         return OrderQuerySet(self.model).filter(id_deleted=False,is_paid=False)

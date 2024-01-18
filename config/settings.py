@@ -40,8 +40,7 @@ INSTALLED_APPS = [
     'account',
     'core',
     'order',
-    'products',
-    
+    'products',    
 ]
 
 MIDDLEWARE = [
@@ -121,8 +120,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static"
+# ]
 STATICFILES_DIRS = [
-    BASE_DIR / "static"
+    os.path.join(BASE_DIR, 'static'),
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

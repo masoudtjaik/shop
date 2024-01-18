@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from datetime import datetime,timedelta
 from django.utils import timezone
+
 # Create your models here.
 
 class Category(Base):
@@ -14,7 +15,7 @@ class Category(Base):
     column = models.IntegerField()
 
     def __str__(self) -> str:
-        return f'{self.name}'
+        return f'{self.name}-{self.column}'
 
 
 class Discount(BaseDiscount):
@@ -27,7 +28,7 @@ class Discount(BaseDiscount):
     type = models.CharField(choices=CUSTOM_DISCOUNT, max_length=8)
     amount = models.PositiveIntegerField()
     max_amount = models.PositiveIntegerField(blank=True, null=True)
-    discount_code = models.IntegerField(blank=True, null=True)
+    discount_code = models.CharField(max_length=20,blank=True, null=True)
 
     def clean(self):
         if self.start<timezone.now():
@@ -40,6 +41,9 @@ class Discount(BaseDiscount):
 
         if self.type == self.CUSTOM_NUMBER and self.max_amount:
             raise ValidationError({'max_dis': 'این فیلد باید خالی باشد '})
+        
+        if self.type == self.CUSTOM_PERECENT and self.discount_code:
+            raise ValidationError({'discount_code': 'این فیلد باید خالی باشد '})
 
         if isinstance(self.max_amount, int) and self.max_amount > 100:
             raise ValidationError({'max_dis': '  این فیلد نباید بیشتر از صد درصد باشد  '})
@@ -97,6 +101,13 @@ class Product(Base, StatusMixin):
         if can:
             return False
         return True
+    
+    
+    # def counter_cell_product(self):
+    #     # orderitems=OrderItem.objects.filter(product=self)
+    #     # sum_cell=sum([item.count for item in orderitems])
+    #     return 'sum_cell'
+        
 
 class Image(models.Model):
     image = models.ImageField(upload_to='images/', blank=True, null=True)
@@ -104,7 +115,7 @@ class Image(models.Model):
     
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='like')
-    product = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_like')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_like')
 
     def clean(self):
         can = Like.objects.filter(user=self.user, product=self.product).exists()

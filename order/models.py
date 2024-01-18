@@ -20,9 +20,9 @@ class Order(BaseOrder):
             self.slug = slugify(f'{self.user}-{self.total}')
         super().save(*args, **kwargs)
 
-    # def get_total(self):
-    #     # return sum(item.get_count() for item in self.order_orderitem.all() )
-    #     return self.order_orderitem.get_count()
+    def total_price(self):
+        return sum(item.get_count() for item in self.order_orderitem.all() )
+        # return self.order_orderitem.get_count()
 
     def __str__(self) -> str:
         return f'{self.slug}'
@@ -44,7 +44,7 @@ class OrderItem(Base):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(f'{self.user}-{self.product}')
+            self.slug = slugify(f'{self.user}-{self.count}')
             # self.product.inventory -=self.count
             # self.product.save()
             # product=Product.objects.get(pk=self.product.id)
@@ -57,3 +57,17 @@ class OrderItem(Base):
 
     def get_count(self):
         return self.product.price_discount * self.count
+    @classmethod
+    def top_cell_product(cls):
+        orderitems=cls.objects.all()
+        list_counter=set([(order_items.counter_cell_product(order_items.product),order_items.product.name) for order_items in orderitems])
+        sorted_by_second = sorted(list_counter, key=lambda tup: tup[0], reverse=True)
+        return sorted_by_second[:10]
+    
+    @staticmethod
+    def counter_cell_product(product):
+        orderitems=OrderItem.objects.filter(product=product)
+        sum_cell=sum([item.count for item in orderitems])
+        return sum_cell
+    
+    
