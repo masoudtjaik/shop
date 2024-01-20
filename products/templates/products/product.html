@@ -21,59 +21,143 @@
 				<!-- row -->
 				<div class="row">
 					<!-- shop -->
-					
-					<div class="col-md-12">
-						<div class="row">
-							<div class="products-tabs">
-								<!-- tab -->
-								<div id="tab1" class="tab-pane active">
-									<div class="products-slick" data-nav="#slick-nav-1">
-										<!-- product -->
-										{% for product in products_all %}
-										<div class="product">
-											<div class="product-img">
-                                                <img src="{{ product.image.url }}" alt="shop">
-												<div class="product-label">
-													{% if product.discount %}
+
+							<!-- product -->
+                {% for product in products_all %}
+							<div class="col-md-4 col-xs-6">
+								<div class="product">
+									<div class="product-img">
+										<img src="{{ product.image.url }}" alt="">
+										<div class="product-label">
+                                            {% if product.discount %}
 														{% if product.discount.type == 'perecent' %}
 														<span class="sale">{{product.discount.amount}}%</span>
 														{% else %}
 														<span class="sale">{{product.discount.amount}} toman</span>
 														{% endif %}
 													{% endif %}
-													<span class="new">NEW</span>
-												</div>
-											</div>
-											<div class="product-body">
-												<p class="product-category">{{product.category.name}}</p>
-												<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
-												{% if product.discount %}
+											<span class="new">NEW</span>
+										</div>
+									</div>
+									<div class="product-body">
+										<p class="product-category">{{ product.category }}</p>
+										<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{ product.name }}</a></h3>
+										{% if product.discount %}
 												<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 												{% else %}
 												<h4 class="product-price">{{product.price_discount}}</h4>
 												{% endif %}
-												
-												<div class="product-rating">
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-												</div>
-												<div class="product-btns">
-													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">like</span></button>
-													<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-												</div>
-											</div>
-											<div class="add-to-cart">
-												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-											</div>
+										<div class="product-rating">
+											<i class="fa fa-star"></i>
+											<i class="fa fa-star"></i>
+											<i class="fa fa-star"></i>
+											<i class="fa fa-star"></i>
+											<i class="fa fa-star"></i>
 										</div>
-										{% endfor %}
+										<div class="product-btns">
+											<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Like</span></button>
+											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+										</div>
+									</div>
+									<div class="add-to-cart">
+										<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+									</div>
+								</div>
+							</div>
+                            {% endfor %}
+                </div>
+                                <div class="store-filter clearfix">
+                                    <span class="store-qty">Showing 6 of products</span>
+                                    <ul class="store-pagination">
+{#                                        <li class="active">1</li>#}
+{#                                        <li><a href="#">2</a></li>#}
+{#                                        <li><a href="#">3</a></li>#}
+{#                                        <li><a href="#">4</a></li>#}
+                                                <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1">&laquo; first</a></li>
+{#            <a href="?page=1">&laquo; first</a>#}
+            <li><a href="?page={{ page_obj.previous_page_number }}">pre</a></li>
+{#            <a href="?page={{ page_obj.previous_page_number }}">previous</a>#}
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">next</a></li>
+{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
+        {% endif %}
+    </span>
+</div>
+
+                                    </ul>
+                                </div>
+							<!-- /product -->
+
+
+
+
+
+
+							<!-- /product -->
+
+					<div class="col-md-12">
+						<div class="row">
+							<div class="products-tabs">
+								<!-- tab -->
+								<div id="tab1" class="tab-pane active">
+{#									<div class="products-slick" data-nav="#slick-nav-1">#}
+										<!-- product -->
+{#										{% for product in products_all %}#}
+{#										<div class="product">#}
+{#											<div class="product-img">#}
+{#                                                <img src="{{ product.image.url }}" alt="shop">#}
+{#												<div class="product-label">#}
+{#													{% if product.discount %}#}
+{#														{% if product.discount.type == 'perecent' %}#}
+{#														<span class="sale">{{product.discount.amount}}%</span>#}
+{#														{% else %}#}
+{#														<span class="sale">{{product.discount.amount}} toman</span>#}
+{#														{% endif %}#}
+{#													{% endif %}#}
+{#													<span class="new">NEW</span>#}
+{#												</div>#}
+{#											</div>#}
+{#											<div class="product-body">#}
+{#												<p class="product-category">{{product.category.name}}</p>#}
+{#												<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>#}
+{#												{% if product.discount %}#}
+{#												<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>#}
+{#												{% else %}#}
+{#												<h4 class="product-price">{{product.price_discount}}</h4>#}
+{#												{% endif %}#}
+{#												#}
+{#												<div class="product-rating">#}
+{#													<i class="fa fa-star"></i>#}
+{#													<i class="fa fa-star"></i>#}
+{#													<i class="fa fa-star"></i>#}
+{#													<i class="fa fa-star"></i>#}
+{#													<i class="fa fa-star"></i>#}
+{#												</div>#}
+{#												<div class="product-btns">#}
+{#													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">like</span></button>#}
+{#													<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>#}
+{#												</div>#}
+{#											</div>#}
+{#											<div class="add-to-cart">#}
+{#												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>#}
+{#											</div>#}
+{#										</div>#}
+{#										{% endfor %}#}
 										
 										<!-- /product -->
 
-									</div>
+{#									</div>#}
 									<div id="slick-nav-1" class="products-slick-nav"></div>
 								</div>
 								<!-- /tab -->
@@ -142,7 +226,7 @@
 									</div>
 									<div class="product-body">
 										<p class="product-category">{{product.category.name}}</p>
-										<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+										<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 										{% if product.discount %}
 														<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 														
@@ -165,7 +249,7 @@
 									</div>
 									<div class="product-body">
 										<p class="product-category">{{product.category.name}}</p>
-										<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+										<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 										{% if product.discount %}
 														<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 														
@@ -188,7 +272,7 @@
 									</div>
 									<div class="product-body">
 										<p class="product-category">{{product.category.name}}</p>
-										<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+										<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 										{% if product.discount %}
 														<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 														
@@ -222,7 +306,7 @@
 											</div>
 											<div class="product-body">
 												<p class="product-category">{{product.category.name}}</p>
-												<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+												<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 												{% if product.discount %}
 																<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 																
@@ -243,7 +327,7 @@
 											</div>
 											<div class="product-body">
 												<p class="product-category">{{product.category.name}}</p>
-												<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+												<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 												{% if product.discount %}
 																<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 																
@@ -264,7 +348,7 @@
 											</div>
 											<div class="product-body">
 												<p class="product-category">{{product.category.name}}</p>
-												<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+												<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 												{% if product.discount %}
 															<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 																
@@ -299,7 +383,7 @@
 											</div>
 											<div class="product-body">
 												<p class="product-category">{{product.category.name}}</p>
-												<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+												<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 												{% if product.discount %}
 														<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 																
@@ -320,7 +404,7 @@
 											</div>
 											<div class="product-body">
 												<p class="product-category">{{product.category.name}}</p>
-												<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+												<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 												{% if product.discount %}
 															<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 											
@@ -341,7 +425,7 @@
 											</div>
 											<div class="product-body">
 												<p class="product-category">{{product.category.name}}</p>
-												<h3 class="product-name"><a href="#">{{product.name}}</a></h3>
+												<h3 class="product-name"><a href="{% url 'products:detail' product.slug  %}">{{product.name}}</a></h3>
 												{% if product.discount %}
 																<h4 class="product-price">{{product.price_discount}} <del class="product-old-price">{{product.price}}</del></h4>
 																
