@@ -51,7 +51,7 @@ class TestProduct(TestCase):
         self.assertEqual(self.product.count_comment(),2)
 
     def test_model_save(self):
-        self.assertEqual(self.product.slug, 'product-10')
+        self.assertEqual(self.product.slug, 'product-1')
 
     
         

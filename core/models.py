@@ -29,10 +29,10 @@ class Manager(models.Manager):
         return QuerySet(self.model)
     
     def ten_product_new(self):
-        return QuerySet(self.model).first(10)
+        return QuerySet(self.model).select_related('category').filter(is_deleted=False, is_active=True)[:10]
     
     def ten_is_discount(self):
-        return QuerySet(self.model).filter(is_deleted=False,is_active=True,discount__isnull=False).first(10)
+        return QuerySet(self.model).filter(is_deleted=False,is_active=True,discount__isnull=False)[:10]
     
     # def get_count(self):
     #     # print('hello',self.model.is_deleted)
@@ -103,8 +103,8 @@ class DiscountManager(models.Manager):
         return DiscountQuerySet(self.model).filter(is_deleted=True)
 
 class BaseDiscount(CustomBase):
-    start=models.DateTimeField(default=timezone.now()+timedelta(minutes=5))
-    expire=models.DateTimeField(default=timezone.now()+timedelta(days=1,minutes=5))
+    start=models.DateTimeField(default=timezone.now()+timedelta(minutes=10))
+    expire=models.DateTimeField(default=timezone.now()+timedelta(days=1,minutes=10))
     is_active=models.BooleanField(default=True)
     objects=DiscountManager()
     

@@ -11,9 +11,8 @@ from django.utils import timezone
 class Category(Base):
     category = models.ForeignKey('self', on_delete=models.CASCADE, related_name='categorys', blank=True, null=True)
     name = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='covers/', blank=True, null=True)
+    image = models.ImageField(upload_to='covers/')
     column = models.IntegerField()
-
     def __str__(self) -> str:
         return f'{self.name}-{self.column}'
 
@@ -56,7 +55,7 @@ class Discount(BaseDiscount):
 class Product(Base, StatusMixin):
     name = models.CharField(max_length=50)
     brand = models.CharField(max_length=50)
-    Specifications = models.CharField(max_length=50)
+    Specifications = models.TextField(max_length=200)
     inventory = models.IntegerField()
     price = models.PositiveIntegerField()
     price_discount=models.PositiveIntegerField(default=0)
@@ -64,7 +63,7 @@ class Product(Base, StatusMixin):
     discount = models.ForeignKey(Discount, on_delete=models.CASCADE, related_name='discount_product', null=True,
                                  blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category_product')
-    image = models.ImageField(upload_to='covers/', blank=True, null=True)
+    image = models.ImageField(upload_to='covers/')
     color=models.CharField(max_length=20,default='black')
 
     def clean(self):
@@ -81,7 +80,11 @@ class Product(Base, StatusMixin):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(f'{self.name}-{self.inventory}')
+            counter=1
+            self.slug = slugify(f'{self.name}')+f'-{counter}'
+            while Product.objects.filter(slug=self.slug).exists():
+                counter += 1
+                self.slug = slugify(f'{self.name}')+f'-{counter}'
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

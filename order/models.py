@@ -60,7 +60,7 @@ class OrderItem(Base):
     @classmethod
     def top_cell_product(cls):
         orderitems=cls.objects.all()
-        list_counter=set([(order_items.counter_cell_product(order_items.product),order_items.product.name) for order_items in orderitems])
+        list_counter=set([(order_items.counter_cell_product(order_items.product),order_items.product) for order_items in orderitems])
         sorted_by_second = sorted(list_counter, key=lambda tup: tup[0], reverse=True)
         return sorted_by_second[:10]
     

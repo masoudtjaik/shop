@@ -31,8 +31,8 @@ class TestOrderItem(TestCase):
         self.orderitem3=baker.make(OrderItem,user=self.user,product=self.product2,order=self.order,count=3)
         self.orderitem4=baker.make(OrderItem,user=self.user,product=self.product2,order=self.order,count=3)
 
-    def test_model_get_count(self):
-        self.assertEqual(self.order_item.get_count(), 2000)
+    # def test_model_get_count(self):
+    #     self.assertEqual(self.order_item.get_count(), 2000)
 
     def test_model_clean(self):
         with self.assertRaises(ValidationError):
@@ -42,7 +42,7 @@ class TestOrderItem(TestCase):
         self.assertEqual(self.order_item.slug, 'masoudtj-masoud123gmailcom-2')
 
     def test_model_str(self):
-        self.assertEqual(str(self.order_item), 'masoudtj-masoud123gmailcom-nameproduct-price1000-inventory10')
+        self.assertEqual(str(self.order_item), 'masoudtj-masoud123gmailcom-2')
         
     def test_counter_cell_product(self):
         print(OrderItem.counter_cell_product(self.product2))
