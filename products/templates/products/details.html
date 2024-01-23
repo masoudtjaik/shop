@@ -2,9 +2,9 @@
 {% load static %}
 {% block navbar %}
 <ul class="main-nav nav navbar-nav">
-	<li class="active"><a href="{% url 'core:home' %}">Home</a></li>
+	<li ><a href="{% url 'core:home' %}">Home</a></li>
 	<li><a href="#">Hot Deals</a></li>
-	<li ><a href="{% url 'core:categories' %}">Categories</a></li>
+	<li class="active"><a href="{% url 'core:categories' %}">Categories</a></li>
 	<li><a href="#">Laptops</a></li>
 	<li><a href="#">Smartphones</a></li>
 	<li><a href="#">Cameras</a></li>
@@ -13,6 +13,7 @@
 {% endblock%}
 {%  block content %}
 		<!-- SECTION -->
+		{% include 'messages.html' %}
 		<div class="section">
 			<!-- container -->
 			<div class="container">
@@ -73,7 +74,7 @@
 
 								<span class="product-available">In Stock</span>
 							</div>
-							<p>{{ product.Specifications }}</p>
+							
 
 
 
@@ -90,7 +91,13 @@
 							</div>
 
 							<ul class="product-btns">
-								<li><a href="#"><i class="fa fa-heart-o"></i> like</a></li>
+								{% if liked or not request.user.is_authenticated %}
+								<li><a href="{% url 'products:like' product.id %}"><i class="fa fa-heart-o "></i> like</a></li>
+								{% else %}
+								<li><a href="{% url 'products:like' product.id %}"><i class="fa fa-heart text-danger"></i> like</a></li>
+								
+								{% endif %}
+								<p>likes : {{product.product_like.count}}</p>
 
 							</ul>
 
@@ -109,17 +116,28 @@
 					<!-- /Product details -->
 
 					<!-- Product tab -->
+					
 					<div class="col-md-12">
+						
 						<div id="product-tab">
 							<!-- product tab nav -->
 							<ul class="tab-nav">
+								<li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
 								<li ><a data-toggle="tab" href="#tab2">Details</a></li>
-								<li class="active"><a data-toggle="tab" href="#tab3">Reviews (3)</a></li>
+								<li ><a data-toggle="tab" href="#tab3">comments({{product.product_comment.count}})</a></li>
 							</ul>
 							<!-- /product tab nav -->
 
 							<!-- product tab content -->
 							<div class="tab-content">
+								<div id="tab1" class="tab-pane fade in active">
+									<div class="row">
+									<div class="col-md-12">
+									<h4>{{ product.Specifications }}</h4>
+									
+									</div>
+									</div>
+									</div> 
 								<!-- tab1  -->
 								<!-- /tab1  -->
 
@@ -127,9 +145,9 @@
 								<div id="tab2" class="tab-pane fade in">
 									<div class="row">
 										<div class="col-md-12">
-                                            <h4><b>Detail</b> : {{ product.Specifications }}</h4>
-					                        <h4><b class="text-info">Inventory</b> : {{ product.inventory }}</h4>
-					                        <h4><b class="text-success">Color</b> : {{ product.color }}</h4>
+											<h5><b class="text-info">brand</b> : {{ product.brand }}</h5>
+					                        <h5><b class="text-info">Inventory</b> : {{ product.inventory }}</h5>
+					                        <h5><b class="text-info">Color</b> : {{ product.color }}</h5>
                                         </div>
 									</div>
 								</div>
@@ -226,10 +244,11 @@
 										<div class="col-md-6">
 											<div id="reviews">
 												<ul class="reviews">
+													{% for comment in page_obj  %}
 													<li>
 														<div class="review-heading">
-															<h5 class="name">John</h5>
-															<p class="date">27 DEC 2018, 8:0 PM</p>
+															<h5 class="name">{{comment.user.username}}</h5>
+															<p class="date">{{comment.created_at}}</p>
 															<div class="review-rating">
 																<i class="fa fa-star"></i>
 																<i class="fa fa-star"></i>
@@ -239,70 +258,45 @@
 															</div>
 														</div>
 														<div class="review-body">
-															<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+															<p>{{comment.body}}</p>
 														</div>
 													</li>
-													<li>
-														<div class="review-heading">
-															<h5 class="name">John</h5>
-															<p class="date">27 DEC 2018, 8:0 PM</p>
-															<div class="review-rating">
-																<i class="fa fa-star"></i>
-																<i class="fa fa-star"></i>
-																<i class="fa fa-star"></i>
-																<i class="fa fa-star"></i>
-																<i class="fa fa-star-o empty"></i>
-															</div>
-														</div>
-														<div class="review-body">
-															<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-														</div>
-													</li>
-													<li>
-														<div class="review-heading">
-															<h5 class="name">John</h5>
-															<p class="date">27 DEC 2018, 8:0 PM</p>
-															<div class="review-rating">
-																<i class="fa fa-star"></i>
-																<i class="fa fa-star"></i>
-																<i class="fa fa-star"></i>
-																<i class="fa fa-star"></i>
-																<i class="fa fa-star-o empty"></i>
-															</div>
-														</div>
-														<div class="review-body">
-															<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-														</div>
-													</li>
+													{% endfor %}
+													
 												</ul>
-												<ul class="reviews-pagination">
-													<li class="active">1</li>
-													<li><a href="#">2</a></li>
-													<li><a href="#">3</a></li>
-													<li><a href="#">4</a></li>
-													<li><a href="#"><i class="fa fa-angle-right"></i></a></li>
-												</ul>
+												<div class="pagination">
+													<span class="step-links">
+														{% if page_obj.has_previous %}
+															<li><a href="?page=1">&laquo; first</a></li>
+												{#            <a href="?page=1">&laquo; first</a>#}
+															<li><a href="?page={{ page_obj.previous_page_number }}">pre</a></li>
+												{#            <a href="?page={{ page_obj.previous_page_number }}">previous</a>#}
+														{% endif %}
+												
+														<span class="current">
+															Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+														</span>
+												
+														{% if page_obj.has_next %}
+															<li><a href="?page={{ page_obj.next_page_number }}">next</a></li>
+												{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
+															<li><a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+												{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
+														{% endif %}
+													</span>
+												</div>
 											</div>
 										</div>
 										<!-- /Reviews -->
 
 										<!-- Review Form -->
 										<div class="col-md-3">
-											<div id="review-form">
-												<form class="review-form">
-													<input class="input" type="text" placeholder="Your Name">
-													<input class="input" type="email" placeholder="Your Email">
-													<textarea class="input" placeholder="Your Review"></textarea>
-													<div class="input-rating">
-														<span>Your Rating: </span>
-														<div class="stars">
-															<input id="star5" name="rating" value="5" type="radio"><label for="star5"></label>
-															<input id="star4" name="rating" value="4" type="radio"><label for="star4"></label>
-															<input id="star3" name="rating" value="3" type="radio"><label for="star3"></label>
-															<input id="star2" name="rating" value="2" type="radio"><label for="star2"></label>
-															<input id="star1" name="rating" value="1" type="radio"><label for="star1"></label>
-														</div>
-													</div>
+											<div id="review-form" >
+												<form class="review-form" action='{% url 'products:comment' product.id %}' method='POST'>
+													{% csrf_token %}
+													
+													<textarea class="input" placeholder="Your Comment" name='body'></textarea>
+													
 													<button class="primary-btn">Submit</button>
 												</form>
 											</div>

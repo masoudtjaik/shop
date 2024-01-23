@@ -1,6 +1,7 @@
 from django.db import models
 from core.models import Base, StatusMixin,BaseDiscount
 from account.models import User
+from django.shortcuts import render,redirect,get_object_or_404
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from datetime import datetime,timedelta
@@ -100,10 +101,18 @@ class Product(Base, StatusMixin):
 
     def can_like(self, user):
         # can=Like.objects.filter(user=user,product=product).exists()
-        can = user.like.filter(product=self).exists()
-        if can:
+        can = user.like.filter(product=self).first()
+        print('masoud',can)
+        if can and can.is_deleted==False:
             return False
         return True
+    
+    def exist_like(self, user):
+        # can=Like.objects.filter(user=user,product=product).exists()
+        can = user.like.filter(product=self).exists()
+        if can:
+            return True
+        return False
     
     
     # def counter_cell_product(self):
@@ -116,10 +125,9 @@ class Image(models.Model):
     image = models.ImageField(upload_to='images/', blank=True, null=True)
     product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name='images')
     
-class Like(models.Model):
+class Like(Base):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='like')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_like')
-
     def clean(self):
         can = Like.objects.filter(user=self.user, product=self.product).exists()
         if can:

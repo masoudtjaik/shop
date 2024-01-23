@@ -35,15 +35,49 @@
 					</div>
 					<!-- /shop -->
 					{% endfor %}
+				</div>
 					
 					<!-- /shop -->
-
+					<div class="store-filter clearfix">
+						<span class="store-qty">Showing {{len}} of Categories</span>
+						<ul class="store-pagination">
+			{#                                        <li class="active">1</li>#}
+			{#                                        <li><a href="#">2</a></li>#}
+			{#                                        <li><a href="#">3</a></li>#}
+			{#                                        <li><a href="#">4</a></li>#}
+									<div class="pagination">
+			<span class="step-links">
+			{% if page_obj.has_previous %}
+			<li><a href="?page=1">&laquo; first</a></li>
+			{#            <a href="?page=1">&laquo; first</a>#}
+			<li><a href="?page={{ page_obj.previous_page_number }}">pre</a></li>
+			{#            <a href="?page={{ page_obj.previous_page_number }}">previous</a>#}
+			{% endif %}
+			
+			<span class="current">
+			Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+			</span>
+			
+			{% if page_obj.has_next %}
+			<li><a href="?page={{ page_obj.next_page_number }}">next</a></li>
+			{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
+			<li><a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+			{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
+			{% endif %}
+			</span>
+			
+			
+						</ul>
+					</div>
 					
 				</div>
 				<!-- /row -->
+				
 			</div>
 			<!-- /container -->
+			
 		</div>
+		
 		<!-- /SECTION -->
 
 		

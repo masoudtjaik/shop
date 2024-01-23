@@ -17,7 +17,11 @@ class Order(BaseOrder):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(f'{self.user}-{self.total}')
+            counter=1
+            self.slug = slugify(f'{self.user}')+f'-{counter}'
+            while Product.objects.filter(slug=self.slug).exists():
+                counter += 1
+                self.slug = slugify(f'{self.user}')+f'-{counter}'
         super().save(*args, **kwargs)
 
     def total_price(self):
@@ -44,12 +48,11 @@ class OrderItem(Base):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(f'{self.user}-{self.count}')
-            # self.product.inventory -=self.count
-            # self.product.save()
-            # product=Product.objects.get(pk=self.product.id)
-            # product.inventory -= self.count
-            # product.save()
+            counter=1
+            self.slug = slugify(f'{self.user}')+f'-{counter}'
+            while Product.objects.filter(slug=self.slug).exists():
+                counter += 1
+                self.slug = slugify(f'{self.user}')+f'-{counter}'
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

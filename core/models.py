@@ -23,7 +23,7 @@ class QuerySet(models.QuerySet):
 class Manager(models.Manager):
 
     def get_queryset(self):
-        return QuerySet(self.model).filter(is_deleted=False, is_active=True)
+        return QuerySet(self.model).filter(is_deleted=False)
 
     def archive(self):
         return QuerySet(self.model)

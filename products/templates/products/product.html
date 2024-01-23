@@ -23,7 +23,22 @@
 					<!-- shop -->
 
 							<!-- product -->
-                {% for product in products_all %}
+				{% if category %}
+					{% for cat in category %}
+					<div class="col-md-4 col-xs-6">
+						<div class="shop">
+							<div class="shop-img">
+                                <img src="{{ cat.image.url }}" alt="shop">
+							</div>
+							<div class="shop-body">
+								<h3>{{cat.name}}<br>Collection</h3>
+								<a href="{% url 'products:product' cat.id %}" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				{% endif %}
+                {% for like,product in products_all %}
 							<div class="col-md-4 col-xs-6">
 								<div class="product">
 									<div class="product-img">
@@ -55,8 +70,17 @@
 											<i class="fa fa-star"></i>
 										</div>
 										<div class="product-btns">
-											<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">Like</span></button>
-											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+											
+											{% if like or not request.user.is_authenticated %}
+											<button class="add-to-wishlist"><a href="{% url 'products:like' product.id %}"><i class="fa fa-heart-o"></i></a><span class="tooltipp">Like</span></button>
+											{% else %}
+											<button class="add-to-wishlist"><a href="{% url 'products:like' product.id %}"><i class="fa fa-heart text-danger"></i></a><span class="tooltipp">Like</span></button>								
+											{% endif %}
+											
+											
+											{% comment %} <button class="add-to-wishlist"><a href="{% url 'products:like' product.id %}"><i class="fa fa-heart-o"></i></a><span class="tooltipp">Like</span></button> {% endcomment %}
+													<span>likes : {{product.product_like.count}} </span>
+													<button class="quick-view"><a class="quick-view" href="{% url 'products:detail' product.slug  %}"><i class="fa fa-eye"></i></a><span class="tooltipp">quick view</span></button>
 										</div>
 									</div>
 									<div class="add-to-cart">
@@ -67,7 +91,7 @@
                             {% endfor %}
                 </div>
                                 <div class="store-filter clearfix">
-                                    <span class="store-qty">Showing 6 of products</span>
+                                    <span class="store-qty">Showing {{len}} of products</span>
                                     <ul class="store-pagination">
 {#                                        <li class="active">1</li>#}
 {#                                        <li><a href="#">2</a></li>#}
