@@ -48,8 +48,14 @@
 						<li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
 					</ul>
 					<ul class="header-links pull-right">
-						<li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
-						<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
+                        {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'account:login' %}"><i class="fa fa-user-o"></i>{{ request.user.username|capfirst }} </a></li>
+                            <li><a href="{% url 'account:logout' %}"><i class="fa fa-user-o"></i>Logout </a></li>
+
+                        {% else %}
+                            <li><a href="{% url 'account:login' %}"><i class="fa fa-user-o"></i>Login </a></li>
+                        {% endif %}
+
 					</ul>
 				</div>
 			</div>
@@ -89,13 +95,7 @@
 						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
 								<!-- Wishlist -->
-								<div>
-									<a href="#">
-										<i class="fa fa-heart-o"></i>
-										<span>Your Wishlist</span>
-										<div class="qty">2</div>
-									</a>
-								</div>
+
 								<!-- /Wishlist -->
 
 								<!-- Cart -->
@@ -142,12 +142,7 @@
 								<!-- /Cart -->
 
 								<!-- Menu Toogle -->
-								<div class="menu-toggle">
-									<a href="#">
-										<i class="fa fa-bars"></i>
-										<span>Menu</span>
-									</a>
-								</div>
+
 								<!-- /Menu Toogle -->
 							</div>
 						</div>
@@ -212,7 +207,7 @@
 		</div>
 		<!-- /SECTION -->
 {% block content %}
-        {% endblock %} }
+        {% endblock %}
 		<!-- NEWSLETTER -->
 		<div id="newsletter" class="section">
 			<!-- container -->

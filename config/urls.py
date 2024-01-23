@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('core.urls',namespace='core')),
     path('product/',include('products.urls',namespace='products')),
+    path('account/',include('account.urls',namespace='account')),
 ]+ static(settings.STATIC_URL, document_root = settings.STATIC_ROOT) +\
     static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

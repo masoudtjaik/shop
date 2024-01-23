@@ -48,19 +48,25 @@ class User(Base, AbstractUser):
         (CUSTOMERUSER_CUSTOMER, 'CUSTOMER'),
         (CUSTOMERUSER_MANAGER, 'MANAGER')
     )
+    CUSTOMERUSER_MALE = 'male'
+    CUSTOMERUSER_FEMAIL = 'female'
+    CUSTOMERUSER_GENDER = (
+        (CUSTOMERUSER_MALE, 'MALE'),
+        (CUSTOMERUSER_CUSTOMER, 'FEMALE'),
+    )
     name = models.CharField(max_length=50)
     family = models.CharField(max_length=50)
     mobile_regex = RegexValidator(regex='^(\+98|0)?9\d{9}$',
                                   message="Phone number must be entered in the format: '+989199999933'.")
     phone_number = models.CharField(validators=[mobile_regex], max_length=20, unique=True)
-    birthday = models.PositiveIntegerField(default=0)
+    birthday = models.DateField(null=True, blank=True)
     email = models.EmailField(unique=True)
-    gender = models.CharField(max_length=10)
+    gender = models.CharField(max_length=10,choices=CUSTOMERUSER_GENDER,default='MALE')
     user_type = models.CharField(max_length=8, choices=CUSTOMERUSER_STATUS, default=CUSTOMERUSER_CUSTOMER)
-    image = models.ImageField(upload_to='covers/', blank=True)
+    image = models.ImageField(upload_to='profiles/', null=True, blank=True)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
     objects = CustomUserManager()
 
     def __str__(self) -> str:
