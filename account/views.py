@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from django.views import View
 from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView, DeleteView, \
     UpdateView
@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models import Q
-
+from .otpcode import OtpGenerator
 
 class Login(View):
     template_class = "account/login.html"
@@ -57,13 +57,21 @@ class Login(View):
             email = request.POST.get("email")
             user = User.objects.filter(Q(username=email) | Q(phone_number=email)).exists()
             email = User.objects.filter(email=email).exists()
+            # if request.session.get("username"):
+            #     del request.session['username']
+            # if request.session.get("email"):
+            #     del request.session['email']
             if user:
                 request.session["username"] = request.POST.get("email")
                 return redirect("account:password")
             elif email:
+                request.session["email"] = request.POST.get("email")
+                otp_code=OtpGenerator()
+                otp=otp_code.generate_otp()
+                request.session["otp_code"] =otp
                 send_mail(
                     'subject',
-                    'hello masoud',
+                    otp,
                     'setting.EMAIL_HOST_USER',
                     [request.POST.get("email")],
                     fail_silently=False
@@ -87,6 +95,7 @@ class Password(Login):
             password = request.POST.get("pass")
             user = authenticate(username=email, password=password)
             if user:
+                
                 login(request, user)
                 if self.next:
                     return redirect(self.next)
@@ -111,6 +120,8 @@ class SingUp(CreateView):
     form_class = UserCreateForm
     # fields = ['email', 'username', 'phone_number', 'password', 'password2']
     success_url = reverse_lazy('core:home')
+    
+    
 
 
 class Signup2(View):
@@ -123,29 +134,74 @@ class Signup2(View):
     def post(self, request):
         form = UserCreateForm(request.POST)
         if form.is_valid():
-            # form.save()
-            email = form.cleaned_data['email']
-            send_mail(
-                'subject',
-                'hello masoud',
-                'setting.EMAIL_HOST_USER',
-                [email],
-                fail_silently=False
-            )
-            return redirect('account:code')
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            # print('username',username)
+            # print('password',password)
+            # request.session["email"] = form.cleaned_data['email']
+            # request.session['custom_user']={
+            #     'email':form.cleaned_data['email'],
+            #     'username':form.cleaned_data['username'],
+            #     'password':form.cleaned_data['password'],
+            #     'phone_number':form.cleaned_data['phone_number'],
+            # }
+            # otp_code=OtpGenerator()
+            # otp=otp_code.generate_otp()
+            # request.session["otp_code"] =otp
+            # send_mail(
+            #     'subject',
+            #     otp,
+            #     'setting.EMAIL_HOST_USER',
+            #     [email],
+            #     fail_silently=False
+            # )
+            # user=authenticate(username=username,password=password)
+            # if user:
+            #     print('salam')
+            #     login(request,user)
+            messages.success(request, 'register done\n now active account with email (otp code) and login with email ', 'success')
+            return redirect('account:login')
         return render(request, self.url, {'form': form})
 
 
 class ConfirmEmail(View):
-    url = 'account/confirm_email.html'
+    template_class= 'account/confirm_email.html'
 
     def get(self, request):
-        return render(request, self.url)
+        return render(request, self.template_class)
 
     def post(self, request):
-        # form = UserCreateForm(request.POST)
-        # if form.is_valid():
-        #     print('hello')
-        #     form.save()
-        #     return redirect('core:home')
-        return render(request, self.url)
+        if request.POST.get("otp"):
+            email = request.session.get("email")
+            next = request.session.get("next")
+            otp_user = request.POST.get("otp")
+            # print('OTP USER',otp_user)
+            # print('OTP EMAIL',otp_email)
+            # if otp_user == otp_email:
+            #     print('true')
+            #     user_object=User.objects.get(email=email)
+            #     if user_object:
+            #         print('true1')
+            #         print(user_object.username)
+            #         print(user_object.password)
+            #         user_object.is_active=True
+            #         user_object.save()
+            print(email)
+            print(otp_user)
+            otp = request.session.get("otp_code")
+            print('otp',otp)
+            user=authenticate(email=email,otpcode=otp_user,otp_code_send=otp)
+            print(user)
+            if user:
+                print('true2')
+                login(request, user)
+                if next:
+                    return redirect(next)
+                return redirect("core:home")
+            else:
+                messages.success(request, 'otp code is wrong ', 'danger')
+                return render(request, self.template_class)
+        else:
+            messages.success(request, 'field otpcode  Is Empty ', 'danger')
+            return render(request, self.template_class)

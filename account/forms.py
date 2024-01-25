@@ -9,7 +9,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = [ 'email', 'username', 'phone_number', 'gender', 'birthday', 'password1',
+        fields = ['user_type' ,'email', 'username', 'phone_number', 'gender', 'birthday', 'password1',
                   'password2']
         # labels = {
         #     'first_name': 'نام',
@@ -27,7 +27,7 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = User
-        fields = ('email', 'username', 'phone_number')
+        fields = ('email', 'username', 'phone_number',)
 
 
 class MyLoginForm(forms.Form):

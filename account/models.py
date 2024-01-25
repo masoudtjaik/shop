@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.query import QuerySet
 from core.models import Base
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
@@ -11,7 +12,7 @@ class CustomUserManager(BaseUserManager):
     Custom user model manager where email is the unique identifiers
     for authentication instead of usernames.
     """
-
+    
     def create_user(self, email, password, **extra_fields):
         """
         Create and save a user with the given email and password.
@@ -64,11 +65,10 @@ class User(Base, AbstractUser):
     gender = models.CharField(max_length=10,choices=CUSTOMERUSER_GENDER,default='MALE')
     user_type = models.CharField(max_length=8, choices=CUSTOMERUSER_STATUS, default=CUSTOMERUSER_CUSTOMER)
     image = models.ImageField(upload_to='profiles/', null=True, blank=True)
-
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
     objects = CustomUserManager()
-
+    is_active = models.BooleanField(default=False)
     def __str__(self) -> str:
         return f'{self.username}-{self.email}'
 

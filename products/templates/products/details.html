@@ -97,7 +97,7 @@
 								<li><a href="{% url 'products:like' product.id %}"><i class="fa fa-heart text-danger"></i> like</a></li>
 								
 								{% endif %}
-								<p>likes : {{product.product_like.count}}</p>
+								<p>likes : {{product.count_likes}}</p>
 
 							</ul>
 
@@ -124,7 +124,7 @@
 							<ul class="tab-nav">
 								<li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
 								<li ><a data-toggle="tab" href="#tab2">Details</a></li>
-								<li ><a data-toggle="tab" href="#tab3">comments({{product.product_comment.count}})</a></li>
+								<li ><a data-toggle="tab" href="#tab3">comments({{product.count_comment}})</a></li>
 							</ul>
 							<!-- /product tab nav -->
 

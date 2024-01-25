@@ -79,7 +79,7 @@
 											
 											
 											{% comment %} <button class="add-to-wishlist"><a href="{% url 'products:like' product.id %}"><i class="fa fa-heart-o"></i></a><span class="tooltipp">Like</span></button> {% endcomment %}
-													<span>likes : {{product.product_like.count}} </span>
+													<span>likes : {{product.count_likes}} </span>
 													<button class="quick-view"><a class="quick-view" href="{% url 'products:detail' product.slug  %}"><i class="fa fa-eye"></i></a><span class="tooltipp">quick view</span></button>
 										</div>
 									</div>

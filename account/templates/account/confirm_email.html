@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     {% load crispy_forms_tags %}
-
+	{% include 'messages.html' %}
 	<title>Login V2</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,7 +47,7 @@
 				<form class="login100-form validate-form " method="post" novalidate>
                     {% csrf_token %}
 					<div class="wrap-input100 validate-input" >
-						<input class="input100" type="text" name="email">
+						<input class="input100" type="text" name="otp">
 						<span class="focus-input100" data-placeholder="enter your code"></span>
 					</div>
                     <div class="container-login100-form-btn">
