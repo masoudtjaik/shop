@@ -4,7 +4,7 @@ from django.views import View
 from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView, DeleteView, \
     UpdateView
 from django.contrib.auth import login, authenticate, logout
-from .forms import MyLoginForm, UserCreateForm
+from .forms import MyLoginForm, UserCreateForm, ProfileForm, PasswordForm
 from .models import User
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -205,3 +205,43 @@ class ConfirmEmail(View):
         else:
             messages.success(request, 'field otpcode  Is Empty ', 'danger')
             return render(request, self.template_class)
+
+class Profile(LoginRequiredMixin, View):
+    template_class = "account/profile.html"
+    form_class = ProfileForm
+
+    def get(self, request):
+        user = request.user
+        form = self.form_class(instance=user)
+        return render(request, self.template_class, {"form": form})
+
+    def post(self, request):
+        user = request.user
+        form = self.form_class(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return render(request, self.template_class, {"form": form})
+        return render(request, self.template_class, {"form": form})
+
+
+class ChangePassword(LoginRequiredMixin, View):
+    template_class = "account/change_password.html"
+    form_class = PasswordForm
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_class, {"form": form})
+
+    def post(self, request):
+        user = request.user
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            result = form.cleaned_data
+            if user.check_password(result["password_before"]):
+                user.set_password(result["password_new"])
+                user.save()
+                return redirect("account:profile")
+            else:
+                messages.success(request, "password is wrong", 'warning')
+                return render(request, self.template_class, {"form": form})
+        return render(request, self.template_class, {"form": form})

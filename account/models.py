@@ -60,7 +60,7 @@ class User(Base, AbstractUser):
     mobile_regex = RegexValidator(regex='^(\+98|0)?9\d{9}$',
                                   message="Phone number must be entered in the format: '+989199999933'.")
     phone_number = models.CharField(validators=[mobile_regex], max_length=20, unique=True)
-    birthday = models.DateField(null=True, blank=True)
+    birthday = models.DateField(help_text='enter like 1376-10-10', null=True, blank=True)
     email = models.EmailField(unique=True)
     gender = models.CharField(max_length=10,choices=CUSTOMERUSER_GENDER,default='MALE')
     user_type = models.CharField(max_length=8, choices=CUSTOMERUSER_STATUS, default=CUSTOMERUSER_CUSTOMER)
