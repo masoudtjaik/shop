@@ -66,6 +66,17 @@ class DetailProduct(ListView):
             context['liked'] = True if self.get_queryset().can_like(self.request.user) else False
         else:
             context['liked'] = False
+        # cart = self.request.session.get('sabad')
+        # if cart:
+        #     products = []
+        #     for cart_id in cart:
+        #         # print(cart_id)
+        #         # print('cart5',cart['5'])
+        #         if Product.objects.get(id=int(cart_id)):
+        #             products.append((cart[str(cart_id)]['numbers'], Product.objects.get(id=int(cart_id))))
+        #     context['carts'] = products
+        #     context['len'] = len(products)
+        #     context['total'] = sum(number*product.price_discount for number, product in products)
         return context
 
 

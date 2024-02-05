@@ -7,6 +7,43 @@
 	<li class="active"><a href="{% url 'core:categories' %}">Categories</a></li>
 </ul>
 {% endblock%}
+{#{% block cart %}#}
+{#    {% for number,cart in carts %}#}
+{#        <div class="product-widget">#}
+{#    <div class="product-img">#}
+{#        <img src="{{ cart.image.url }}" alt="logo">#}
+{#    </div>#}
+{#    <div class="product-body">#}
+{#        <h3 class="product-name"><a href="#">{{ cart.name }}</a></h3>#}
+{#        <h4 class="product-price"><span class="qty">{{ number }} x </span>{{ cart.price_discount }}</h4>#}
+{#    </div>#}
+{#            <form action="{% url 'order:delete_cart' cart.id product.slug %}" method="get">#}
+{#              {% csrf_token %}#}
+{#              <button class="delete"><i class="fa fa-close"></i></button>#}
+{#            </form>#}
+{##}
+{##}
+{#</div>#}
+{#    {% endfor %}#}
+{##}
+{##}
+{#{% endblock %}#}
+{#{% block total %}#}
+{#    <div class="cart-summary">#}
+{#    {% if len %}#}
+{#        <small>{{ len }} Item(s) selected</small>#}
+{#        {% else %}#}
+{#        <small>0 Item(s) selected</small>#}
+{#    {% endif %}#}
+{##}
+{#    <h5>SUBTOTAL: ${{ total }}</h5>#}
+{#</div>#}
+{#{% endblock %}#}
+{#{% block qty %}#}
+{#    {% if len %}#}
+{#        <div class="qty">{{ len }}</div>#}
+{#    {% endif %}#}
+{#{% endblock %}#}
 {%  block content %}
 		<!-- SECTION -->
 		{% include 'messages.html' %}
@@ -73,18 +110,22 @@
 							
 
 
-
-							<div class="add-to-cart">
+                            <form action="{% url 'order:add_cart' product.id %}" method="get">
+                                {% csrf_token %}
+                                <div class="add-to-cart">
 								<div class="qty-label">
 									Qty
 									<div class="input-number">
-										<input type="number">
+										<input type="number" name="number">
 										<span class="qty-up">+</span>
 										<span class="qty-down">-</span>
 									</div>
 								</div>
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>
+                                    add to cart </button>
 							</div>
+                            </form>
+
 
 							<ul class="product-btns">
 								{% if liked or not request.user.is_authenticated %}
@@ -362,7 +403,11 @@
 								</div>
 							</div>
 							<div class="add-to-cart">
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                <form action="{% url 'order:add_cart' related.id %}" method="post">
+                                {% csrf_token %}
+                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                                    </form>
+
 							</div>
 						</div>
 					</div>
