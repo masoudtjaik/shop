@@ -119,3 +119,23 @@ class CreateAddress(LoginRequiredMixin, View):
 
 class CheckoutView(CartView):
     template_class = 'order/checkout.html'
+
+class DateOrder(LoginRequiredMixin,ListView):
+    template_name='order/date_order.html'
+    model=Order
+    paginate_by=4
+
+
+class SubtitleOrder(ListView):
+    template_name='order/subtitle_order.html'
+    model=Order
+    paginate_by=4
+    queryset=Order.objects.archive() 
+
+class ShowOrderItem(LoginRequiredMixin,ListView):
+    template_name='order/order_item.html'
+    model=OrderItem
+    paginate_by=4
+    def get_queryset(self):
+        return OrderItem.objects.select_related('order').filter(order__id=self.kwargs['pk'])
+     

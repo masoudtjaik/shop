@@ -40,10 +40,37 @@
 <!--===============================================================================================-->
 </head>
 <body >
-
+	{% comment %} <form action="" method="post">
+		{% csrf_token %}	
+			<button type='submit' value="date order" name='date_order'>
+			<input type='submit' value="subtitle order" name='subtitle_order'>
+			<input type='submit' value="Address" name='address'>
+	</form> {% endcomment %}
+	
+	
 	<div class="limiter ">
 		<div class="container-login100 ">
+			<div class="container">
+				<div class="row">
+					<div class='col-md-5'>
+						<a href="{% url 'order:date_order' %}"  class=" btn btn-info"> date order </a>
+				
+					</div>
+					
+					<div class='col-md-5'>
+
+						<a href="{% url 'order:subtitle_order' %}"  class=" btn btn-danger"> subtitle order </a>
+						
+					</div>
+					<div class='col-md-2'>
+					
+						<a href="{% url 'account:address' %}"  class=" btn btn-warning"> Address </a>
+					</div>
+			
+				</div>
+			</div>
 			<div class="wrap-login100">
+				
 				{% if request.user.image %}
 				<img src="{{ request.user.image.url }}" class='img-circle' alt="Cinque Terre" width="304" height="236">
 				{% endif %}

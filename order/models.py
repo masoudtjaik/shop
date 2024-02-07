@@ -15,6 +15,7 @@ class Order(BaseOrder):
     discount = models.ForeignKey(Discount, on_delete=models.CASCADE, related_name='discount_order', null=True,
                                  blank=True)
 
+
     def save(self, *args, **kwargs):
         if not self.slug:
             counter=1
