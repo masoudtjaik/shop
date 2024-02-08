@@ -88,6 +88,9 @@ class RemoveFromCartView(APIView):
         response.set_cookie("cart", temp_str, expires=expires_string)
 
         return response
+
+    def get_user_cart(self, request, total):
+        pass
 #
 #
 # class UpdateCart(APIView, BasicViewMixin):

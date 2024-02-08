@@ -8,6 +8,7 @@ from .cart import Cart
 from .cart2 import CartApi
 from account.models import Address
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.views import APIView
 
 
 # Create your views here.
@@ -92,7 +93,7 @@ class OrderDetailView(LoginRequiredMixin, View):
         return render(request, self.temlate_class, {'order': order, 'cart': cart})
 
 
-class OrderCreateView(LoginRequiredMixin, View):
+class OrderCreateViews(LoginRequiredMixin, View):
     def get(self, request):
         cart = Cart(request)
         order = Order.objects.create(user=request.user)
@@ -145,3 +146,25 @@ class ShowOrderItem(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return OrderItem.objects.select_related('order').filter(order__id=self.kwargs['pk'])
+
+
+class DeleteCart(View):
+    def get(self, request, id):
+        cart = CartApi(request)
+        response = cart.delete(id)
+        return response
+
+
+class OrderCreateView(LoginRequiredMixin, APIView):
+    def get(self, request):
+        cart = CartApi(request)
+        order = Order.objects.create(user=request.user, is_paid=True)
+        # order = Order(user=request.user)
+        # order.save()
+
+        for item in cart:
+            OrderItem.objects.create(user=request.user, order=order, product=item['product'], count=item['quantity'])
+            # order_item = OrderItem(order = order,Product = item['product'], quantity =item['quantity'])
+            # order_item.save()
+        response = cart.delete()
+        return response

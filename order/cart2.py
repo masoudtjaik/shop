@@ -3,13 +3,16 @@ import datetime
 import ast
 from products.models import Product
 from .api.v1.serializers import UpdateCartSerializer
-
+from django.shortcuts import render,redirect
+import json
+from django.http import HttpResponseRedirect
 CART_COOKIE_ID = 'cart'
 
 
 class CartApi:
     def __init__(self, request) -> None:
         cart = request.COOKIES.get(CART_COOKIE_ID, None)
+        self.request = request
         if not cart:
             self.cart = {}
         else:
@@ -47,6 +50,25 @@ class CartApi:
         expires_string = expires.strftime("%a, %d-%b-%Y %H:%M:%S")
         response.set_cookie(CART_COOKIE_ID, self.cart, expires=expires_string)
         return response
+
+    def delete(self, pk=None):
+        if pk is None:
+            response = HttpResponseRedirect('/')
+            response.delete_cookie(CART_COOKIE_ID)
+            return response
+        else:
+            response = redirect('order:cart')
+            cart_cookie = self.request.COOKIES.get(CART_COOKIE_ID)
+            if cart_cookie:
+                cart = json.loads(cart_cookie.replace("'", '"'))
+                print('cart', cart)
+
+                if str(pk) in cart:
+                    print('hast')
+                    del cart[str(pk)]
+                cart_cookie = json.dumps(cart)
+                response.set_cookie(CART_COOKIE_ID, cart_cookie)
+            return response
 
     def get_total_price(self):
         return sum(int(item['price']) * int(item['quantity']) for item in self.cart.values())

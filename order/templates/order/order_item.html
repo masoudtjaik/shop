@@ -9,6 +9,7 @@
         <tr>
           <th scope="col">#</th>
           <th scope="col">name</th>
+          <th scope="col">quantity</th>
           <th scope="col">price</th>
            <th scope="col">Discount</th>
           <th scope="col">price with discount</th>
@@ -21,6 +22,7 @@
         <tr>
           <th scope="row">{{ forloop.counter }}</th>
           <td>{{ item.product.name }}</td>
+          <td>{{ item.count }}</td>
           <td>{{ item.product.price }}</td>
           <td>{{ item.product.discount }}</td>
           <td>{{ item.product.price_discount }}</td>

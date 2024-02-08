@@ -12,5 +12,7 @@ urlpatterns = [
     path('date/', views.DateOrder.as_view(), name="date_order"),
     path('subtitle/', views.SubtitleOrder.as_view(), name="subtitle_order"),
     path('items/<int:pk>', views.ShowOrderItem.as_view(), name="order_item"),
+    path('cart/remove/<int:id>/', views.DeleteCart.as_view(), name="remove"),
+    path('order/', views.OrderCreateView.as_view(), name="create_order"),
     # path('categories',views.ShowCategorys.as_view(),name='categories'),
 ]
