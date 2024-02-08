@@ -110,22 +110,26 @@
 							
 
 
-                            <form action="{% url 'order:add_cart' product.id %}" method="get">
-                                {% csrf_token %}
-                                <div class="add-to-cart">
-								<div class="qty-label">
-									Qty
-									<div class="input-number">
-										<input type="number" name="number">
-										<span class="qty-up">+</span>
-										<span class="qty-down">-</span>
-									</div>
-								</div>
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>
-                                    add to cart </button>
-							</div>
-                            </form>
+{#                            <form action="{% url 'order:add_cart' product.id %}" method="get">#}
+{#                                {% csrf_token %}#}
+{#                                <div class="add-to-cart">#}
+{#								<div class="qty-label">#}
+{#									Qty#}
+{#									<div class="input-number">#}
+{#										<input type="number" name="number">#}
+{#										<span class="qty-up">+</span>#}
+{#										<span class="qty-down">-</span>#}
+{#									</div>#}
+{#								</div>#}
+{#								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>#}
+{#                                    add to cart </button>#}
+{#							</div>#}
+{#                            </form>#}
+                            <div class="add-to-cart">
+                                    <input type="text" name="" id="quantity">
+									<input type="submit" class="add-to-cart-btn" value="add to cart " formmethod="post" onclick="add_to_cart(event, this)" ><i class="fa fa-shopping-cart"></i>
 
+							</div>
 
 							<ul class="product-btns">
 								{% if liked or not request.user.is_authenticated %}
@@ -403,10 +407,10 @@
 								</div>
 							</div>
 							<div class="add-to-cart">
-                                <form action="{% url 'order:add_cart' related.id %}" method="post">
-                                {% csrf_token %}
-                                    <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                                    </form>
+{#                                <form action="{% url 'order:add_cart' related.id %}" method="post">#}
+{#                                {% csrf_token %}#}
+                                            <button class="add-to-cart-btn" onclick="add_to_cart_related(event, this, { id: {{ product.id }},name: 'hello' })">Add to Cart</button>
+{#                                    </form>#}
 
 							</div>
 						</div>
@@ -429,4 +433,67 @@
 
 
         </div>
+          <script>
+        const len = document.getElementById('len')
+        async function add_to_cart(event, el) {
+            event.preventDefault()
+
+            const response = await fetch("/api/v1/cart/add_to_cart/", {
+                method: el.formMethod,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    pk: "{{ product.pk }}",
+                    name: "{{ product.name }}",
+                    price: "{{ product.price }}",
+                    discounted_price: "{{ product.price_discount }}",
+                    quantity: document.getElementById('quantity').value,
+                })
+            })
+
+            if (response.status === 200){
+                const productObject = await response.json();
+                alert("add to cart ")
+                len.innerText = productObject.len
+            } else if (response.status === 406) {
+               alert("this is empty")
+            }else if (response.status === 400) {
+                alert("quantity > inventory")
+            } else {
+               alert("wrong proccess")
+            }
+        }
+        {#const len = document.getElementById('len')#}
+        async function add_to_cart_related(event, el, product) {
+            event.preventDefault();
+            const response = await fetch("/api/v1/cart/add_to_cart/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    pk: product.id, // Use the product.id as pk
+                    name: product.name, // Use the product.name as name
+                    price: "2000",
+                    discounted_price: "2000",
+                    quantity: "1"
+                })
+            });
+
+            if (response.status === 200) {
+                const productObject = await response.json(); // Assuming the response contains the product object
+                console.log(productObject); // Log the product object to the console
+                alert("Added to cart");
+                len.innerText = productObject.len
+            } else if (response.status === 406) {
+                alert("The cart is empty");
+            } else if (response.status === 400) {
+                alert("Quantity exceeds inventory");
+            } else {
+                alert("Something went wrong");
+            }
+        }
+        </script>
 {% endblock %}

@@ -5,6 +5,7 @@ from .models import OrderItem, Order
 from products.models import Product
 from django.contrib import messages
 from .cart import Cart
+from .cart2 import CartApi
 from account.models import Address
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -39,19 +40,22 @@ class ADDTOCART(View):
         return redirect('products:detail', self.product.slug)
 
     def add_to_cart(self, request, number):
+        print('masoudddd meysammmmm')
         if self.product.inventory < int(number):
             messages.success(request, f'This amount is not available in the warehouse. '
                                       f'The inventory is : {self.product.inventory}', 'danger')
             return redirect('products:detail', self.product.slug)
 
-        cart = Cart(request)
-        cart_info = cart.add(self.product, number)
+        cart = CartApi(request)
+        cart_info = cart.add(self.product.name, number, self.product)
         if cart_info is False:
             messages.success(request, f'This amount is not available in the warehouse. '
                                       f'The inventory is  : {self.product.inventory}', 'danger')
             return redirect('products:detail', self.product.slug)
         messages.success(request, 'add to cart done  ', 'success')
         print('session', request.session.get('sabad'))
+        cart.get_response()
+        print(cart)
         # request.session['username'] = username
 
 
@@ -71,7 +75,7 @@ class CartView(View):
     template_class = 'order/cart.html'
 
     def get(self, request):
-        cart = Cart(request)
+        cart = CartApi(request)
         if request.user.is_authenticated:
             address = Address.objects.filter(user=request.user)
         else:
@@ -120,22 +124,24 @@ class CreateAddress(LoginRequiredMixin, View):
 class CheckoutView(CartView):
     template_class = 'order/checkout.html'
 
-class DateOrder(LoginRequiredMixin,ListView):
-    template_name='order/date_order.html'
-    model=Order
-    paginate_by=4
+
+class DateOrder(LoginRequiredMixin, ListView):
+    template_name = 'order/date_order.html'
+    model = Order
+    paginate_by = 4
 
 
 class SubtitleOrder(ListView):
-    template_name='order/subtitle_order.html'
-    model=Order
-    paginate_by=4
-    queryset=Order.objects.archive() 
+    template_name = 'order/subtitle_order.html'
+    model = Order
+    paginate_by = 4
+    queryset = Order.objects.archive()
 
-class ShowOrderItem(LoginRequiredMixin,ListView):
-    template_name='order/order_item.html'
-    model=OrderItem
-    paginate_by=4
+
+class ShowOrderItem(LoginRequiredMixin, ListView):
+    template_name = 'order/order_item.html'
+    model = OrderItem
+    paginate_by = 4
+
     def get_queryset(self):
         return OrderItem.objects.select_related('order').filter(order__id=self.kwargs['pk'])
-     

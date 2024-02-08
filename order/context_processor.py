@@ -1,5 +1,6 @@
 from .cart import Cart
+from .cart2 import CartApi
 
 
 def cart(request):
-    return {'cart': Cart(request)}
+    return {'cart': CartApi(request)}

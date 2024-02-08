@@ -94,7 +94,7 @@
 							<div class="order-products">
 								{% for item in cart %}
 								<div class="order-col">
-									<div>{{item.numbers}}x {{item.product.name}}</div>
+									<div>{{item.quantity}}x {{item.product.name}}</div>
 									<div>${{item.price}}</div>
 								</div>
 								{% endfor %}

@@ -20,9 +20,9 @@
         <tr>
           <th scope="row">{{ forloop.counter }}</th>
           <td>{{ item.product.name }}</td>
-          <td>{{ item.numbers }}</td>
+          <td>{{ item.quantity }}</td>
           <td>{{ item.price }}</td>
-          <td>{{ item.total }}</td>
+          <td>{{ item.total_price }}</td>
           <td><a href="{% url 'order:delete_cart' item.product.slug %}">remove</a></td>
         </tr>
        {% endfor %}
