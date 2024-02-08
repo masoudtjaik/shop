@@ -474,6 +474,8 @@
 
 <script>
             const len = document.getElementById('len')
+            const total_price = document.getElementById('total_price')
+            const len_selected =document.getElementById('len_selected')
         async function add_to_cart(event, el, product) {
             event.preventDefault();
             const response = await fetch("/api/v1/cart/add_to_cart/", {
@@ -495,6 +497,8 @@
                 console.log(productObject); // Log the product object to the console
                 alert("Added to cart");
                 len.innerText = productObject.len
+                total_price.innerText = productObject.total_price
+                len_selected.innerText = productObject.len
             } else if (response.status === 406) {
                 alert("The cart is empty");
             } else if (response.status === 400) {

@@ -125,8 +125,8 @@
 											{% endfor %}
 										</div>
 										<div class="cart-summary">
-											<small>{{cart|length}} Item(s) selected</small>
-											<h5>${{cart.get_total_price}}</h5>
+											<small id="len_selected">{{cart|length}}</small> Item(s) selected
+											<h5 id="total_price">${{cart.get_total_price}}</h5>
 										</div>
 										<div class="cart-btns">
 											<a href="{% url 'order:cart' %}">View Cart</a>

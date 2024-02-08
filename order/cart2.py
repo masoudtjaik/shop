@@ -42,7 +42,7 @@ class CartApi:
         #     data = UpdateCartSerializer(i)
         #     if data.is_valid():
         #         name = data.validated_data['name']
-        response = Response({CART_COOKIE_ID: 'ok', 'len': self.__len__()})
+        response = Response({CART_COOKIE_ID: 'ok', 'len': self.__len__(), 'total_price': self.get_total_price()})
         expires = datetime.datetime.now() + datetime.timedelta(weeks=100)
         expires_string = expires.strftime("%a, %d-%b-%Y %H:%M:%S")
         response.set_cookie(CART_COOKIE_ID, self.cart, expires=expires_string)

@@ -45,8 +45,8 @@ class AddToCartView(APIView):
             #     cart = f'{cart_dict}'
             # else:
             #     cart += f';{cart_dict}'
-            cart2 = Cart(request)
-            cart_info = cart2.add(product, quantity)
+            # cart2 = Cart(request)
+            # cart_info = cart2.add(product, quantity)
             carts = my_cart.add(name, quantity, product)
             # if cart_info is False:
             #     return Response(status=status.HTTP_400_BAD_REQUEST)
