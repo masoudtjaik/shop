@@ -18,55 +18,46 @@
           <th scope="col"> x </th> {% endcomment %}
         </tr>
       </thead>
-      <tbody>
+
+
+    <tbody>
         {% for item in object_list %}
-        <tr>
-          <th scope="row">{{ forloop.counter }}</th>
-          <td> <a href='{% url 'order:order_item' item.id %}'>{{ item.created_at }}</a></td>
-          <td>{{ item.total }}</td>
-          {% if item.is_paid %}
-            <td>Done</td>
-            {%  else %}
-            <td>x</td>
-          {% endif %}
-          {% if item.is_deleted %}
-            <td>deleted</td>
-            {%  else %}
-            <td>-</td>
-          {% endif %}
-          {% comment %} <td>{{ item.country }}</td>
-          <td>{{ item.street }}</td>
-          <td>{{ item.state }}</td>
-          <td><a href="{% url 'account:delete_address' item.id %}">remove</a></td> {% endcomment %}
-        </tr>
-       {% endfor %}
-       {% comment %} <tr>
-        <td>Total</td>
-        <td colspan="4"></td>
-        <td>{{cart.get_total_price}}</td>
-       </tr> {% endcomment %}
-      </tbody>
-  </table>
-{% comment %} <a href="{% url 'order:checkout' %}" class="btn btn-primary">Checkout</a> {% endcomment %}
+            <!-- Display order details -->
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td><a href='{% url 'api:order_items' item.id %}'>{{ item.created_at }}</a></td>
+                <td>{{ item.total }}</td>
+                {% if item.is_paid %}
+                    <td>Done</td>
+                {% else %}
+                    <td>x</td>
+                {% endif %}
+                {% if item.is_deleted %}
+                    <td>deleted</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination links -->
 <div class="pagination">
-  <span class="step-links">
-    {% if page_obj.has_previous %}
-      <li><a href="?page=1">&laquo; first</a></li>
-{#            <a href="?page=1">&laquo; first</a>#}
-      <li><a href="?page={{ page_obj.previous_page_number }}">pre</a></li>
-{#            <a href="?page={{ page_obj.previous_page_number }}">previous</a>#}
-    {% endif %}
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1">&laquo; first</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}">pre</a></li>
+        {% endif %}
 
-    <span class="current">
-      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">next</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+        {% endif %}
     </span>
-
-    {% if page_obj.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}">next</a></li>
-{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
-      <li><a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
-{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
-    {% endif %}
-  </span>
 </div>
 {% endblock %}

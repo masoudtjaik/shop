@@ -1,10 +1,14 @@
 import datetime
 
+from django.template.response import TemplateResponse
 from rest_framework.status import HTTP_406_NOT_ACCEPTABLE
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import NotFound
+from django.views.generic import TemplateView
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Sum
 
 # from user.authentication import JWTAuthentication
 from .serializers import *
@@ -15,6 +19,8 @@ from products.models import Product
 from order.cart import Cart
 from order.cart2 import CartApi
 from rest_framework import status
+from account.models import Address
+from order.models import *
 
 
 class AddToCartView(APIView):
@@ -91,6 +97,8 @@ class RemoveFromCartView(APIView):
 
     def get_user_cart(self, request, total):
         pass
+
+
 #
 #
 # class UpdateCart(APIView, BasicViewMixin):
@@ -230,3 +238,95 @@ class RemoveFromCartView(APIView):
 #         response = Response({'order_id': order.pk})
 #         response.set_cookie("cart", '')
 #         return response
+
+
+class ShowAddress(APIView):
+
+    def get(self, request):
+        address_list = Address.objects.filter(user=request.user)
+        paginator = Paginator(address_list, 10)
+
+        page = request.GET.get('page')
+        try:
+            addresses = paginator.page(page)
+        except PageNotAnInteger:
+            addresses = paginator.page(1)
+        except EmptyPage:
+            addresses = paginator.page(paginator.num_pages)
+
+        serializer_data = AddressSerializer(instance=addresses, many=True)
+
+        context = {
+            'object_list': serializer_data.data,
+            'addresses': addresses
+        }
+        return TemplateResponse(request, 'account/address.html', context, status=status.HTTP_200_OK)
+
+    # return TemplateResponse(request, 'account/address.html', context)
+
+
+class SubtitleOrder(APIView):
+    def get(self, request):
+        orders = Order.objects.filter(user=request.user)
+
+        paginator = Paginator(orders, 10)
+
+        page = request.GET.get('page')
+        try:
+            orders = paginator.page(page)
+        except PageNotAnInteger:
+            orders = paginator.page(1)
+        except EmptyPage:
+            orders = paginator.page(paginator.num_pages)
+
+        serializer_data = SubtitleOrderSerializer(instance=orders, many=True)
+        context = {
+            'object_list': serializer_data.data,
+            'page_obj': orders
+        }
+        return TemplateResponse(request, 'order/subtitle_order.html', context, status=status.HTTP_200_OK)
+
+
+class DateOrder(APIView):
+    def get(self, request):
+        orders = Order.objects.filter(user=request.user)
+
+        paginator = Paginator(orders, 10)
+
+        page = request.GET.get('page')
+        try:
+            orders = paginator.page(page)
+        except PageNotAnInteger:
+            orders = paginator.page(1)
+        except EmptyPage:
+            orders = paginator.page(paginator.num_pages)
+
+        serializer_data = DateOrderSerializer(instance=orders, many=True)
+        context = {
+            'object_list': serializer_data.data,
+            'page_obj': orders
+        }
+        return TemplateResponse(request, 'order/date_order.html', context, status=status.HTTP_200_OK)
+
+
+class OrderItems(APIView):
+    def get(self, request, get_id):
+        products = Product.objects.prefetch_related('product_orderitem').filter(product_orderitem__order__id=get_id)
+        products_with_quantity = products.annotate(total_quantity=Sum('product_orderitem__count'))
+
+        paginator = Paginator(products_with_quantity, 10)
+
+        page = request.GET.get('page')
+        try:
+            products_with_quantity = paginator.page(page)
+        except PageNotAnInteger:
+            products_with_quantity = paginator.page(1)
+        except EmptyPage:
+            products_with_quantity = paginator.page(paginator.num_pages)
+
+        serializer_data = ProductSerializer(instance=products_with_quantity, many=True)
+        context = {
+            'object_list': serializer_data.data,
+            'page_obj': products_with_quantity
+        }
+        return TemplateResponse(request, 'order/order_item.html', context, status=status.HTTP_200_OK)

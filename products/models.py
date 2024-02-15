@@ -100,6 +100,8 @@ class Product(Base, StatusMixin):
         count = self.product_comment.count()
         return count
 
+
+
     def can_like(self, user):
         # can=Like.objects.filter(user=user,product=product).exists()
         can = user.like.filter(product=self).first()

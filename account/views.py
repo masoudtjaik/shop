@@ -5,7 +5,7 @@ from django.views.generic import TemplateView, RedirectView, ListView, DetailVie
     UpdateView
 from django.contrib.auth import login, authenticate, logout
 from .forms import MyLoginForm, UserCreateForm, ProfileForm, PasswordForm
-from .models import User,Address
+from .models import User, Address
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -249,13 +249,14 @@ class ChangePassword(LoginRequiredMixin, View):
 
 
 class ShowAddress(ListView):
-    template_name='account/address.html'
-    model=Address
-    paginate_by=4
-    
+    template_name = 'account/address.html'
+    model = Address
+    paginate_by = 4
+
+
 class DeleteAddress(View):
-    
-    def get(self,request,id):
-        address=Address.objects.get(pk=id)
+
+    def get(self, request, id):
+        address = Address.objects.get(pk=id)
         address.delete()
         return redirect('account:address')
